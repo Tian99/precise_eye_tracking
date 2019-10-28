@@ -1,7 +1,4 @@
 # python3 video.py -ext png -o output.mp4
-
-
-
 import cv2
 import argparse
 import os
