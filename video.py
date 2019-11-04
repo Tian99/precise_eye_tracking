@@ -10,7 +10,7 @@ ap.add_argument("-o", "--output", required=False, default='output.mp4', help="ou
 args = vars(ap.parse_args())
 
 # Arguments
-dir_path = './frame/'
+dir_path = './testing/'
 ext = args['extension']
 output = args['output']
 

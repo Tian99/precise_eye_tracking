@@ -17,6 +17,7 @@ def threshold(image):
     _, threshold = cv2.threshold(cropped, 90, 255, cv2.THRESH_BINARY) 
     
     threshold = canny(threshold)
+    
 
 
     # threshold = blur_frame(threshold)
