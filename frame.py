@@ -7,12 +7,23 @@ from eye_circle import circle
 from glint_detection import circle_glint
 import pickle
  
-def to_file(appDict):
-    pickle_out = open("data/dict.pickle","wb")
+def to_file(appDict, address):
+    pickle_out = open(address,"wb")
     pickle.dump(appDict, pickle_out)
-#Dictionary that have every data in it
-dic = {}
-li = []
+
+def to_dict(coordinate, maximum):
+    dic = {}
+    li = []
+    for j in range(0, len(maximum)):
+
+        if(maximum[0] == maximum[1]):
+            maximum[1] = maximum[1] - 1
+
+        dic[maximum[j]] = list(coordinate[j])
+    li.append(dic)
+
+    return li
+
 # Opens the Video file
 cap= cv2.VideoCapture('trim.mov')
 i=0
@@ -32,14 +43,12 @@ while(cap.isOpened()):
     print('--------------------------')
     coordinate_glint, maximum_glint = circle_glint(i, task)
 
-    for j in range(0, len(maximum)):
+    data_pupil = to_dict(coordinate, maximum)
+    data_glint = to_dict(coordinate_glint, maximum_glint)
 
-        if(maximum[0] == maximum[1]):
-            maximum[1] = maximum[1] - 1
 
-        dic[maximum[j]] = list(coordinate[j])
-    li.append(dic)
-    to_file(li)
+    to_file(data_pupil, "data/dict.pickle")
+    to_file(data_glint, "data/dict_glint.pickle")
     
     #Renew the dictionary
     dic = {}

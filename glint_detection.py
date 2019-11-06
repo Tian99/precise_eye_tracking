@@ -68,7 +68,7 @@ def circle_glint(name_count, frame):
 
   for x, y, r in max_cor:
     cv2.circle(original_image, (x,y), r, (0,255,0))
-    cv2.imwrite('testing/kang%05d.png'%name_count, original_image)
+    cv2.imwrite('data_glint/kang%05d.png'%name_count, original_image)
 
   return max_cor, max_collec
 

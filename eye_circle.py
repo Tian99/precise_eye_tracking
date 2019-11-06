@@ -70,7 +70,7 @@ def circle(name_count, frame):
 
   for x, y, r in max_cor:
     cv2.circle(original_image, (x,y), r, (0,0,255))
-    cv2.imwrite('testing/kang%05d.png'%name_count, original_image)
+    cv2.imwrite('data_pupil/kang%05d.png'%name_count, original_image)
 
   return max_cor, max_collec
 
