@@ -6,11 +6,11 @@ import os
 # Construct the argument parser and parse the arguments
 ap = argparse.ArgumentParser()
 ap.add_argument("-ext", "--extension", required=False, default='png', help="extension name. default is 'png'.")
-ap.add_argument("-o", "--output", required=False, default='output.mp4', help="output video file")
+ap.add_argument("-o", "--output", required=False, default='output2.mp4', help="output video file")
 args = vars(ap.parse_args())
 
 # Arguments
-dir_path = './testing/'
+dir_path = './data_pupil/'
 ext = args['extension']
 output = args['output']
 

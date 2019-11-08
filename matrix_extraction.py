@@ -61,7 +61,7 @@ def add_cal_timing(tfile,df):
     unpauseidx = pd.np.where(df['totaltime'].diff()>.02)[0]
     if len(unpauseidx)>0:
         df['adjtime'] = df['totaltime'] - df['totaltime'][unpauseidx[0]]
-    
+
     j=0; lasti=0
     df['pos'] = pd.np.NaN
     df['event_onset'] = pd.np.NaN

@@ -6,7 +6,7 @@ from threshold import threshold
 from eye_circle import circle
 from glint_detection import circle_glint
 import pickle
- 
+
 def to_file(appDict, address):
     pickle_out = open(address,"wb")
     pickle.dump(appDict, pickle_out)
@@ -25,7 +25,7 @@ def to_dict(coordinate, maximum):
     return li
 
 # Opens the Video file
-cap= cv2.VideoCapture('trim.mov')
+cap= cv2.VideoCapture('/Volumes/L/Data/Tasks/MGSEncMem/7T/11763_20190507/11763_20190506_run1_151744.avi.avi')
 i=0
 while(cap.isOpened()):
     ret, frame = cap.read()
@@ -49,11 +49,11 @@ while(cap.isOpened()):
 
     to_file(data_pupil, "data/dict.pickle")
     to_file(data_glint, "data/dict_glint.pickle")
-    
+
     #Renew the dictionary
     dic = {}
     i+=1
 #Draw the circle after all is finished
- 
+
 cap.release()
 cv2.destroyAllWindows()
