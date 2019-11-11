@@ -11,10 +11,11 @@ def threshold(image):
     
     shape_1 = image.shape[0]
     shape_2 = image.shape[1]
-    #Cut it 
-    cropped = imageObject[int((280/1776)*shape_1):shape_1, int((380/2364)*shape_2):int((2100/2364)*shape_2)] 
+    #Cut it
+    #Don't crop, see how it goes
+    #cropped = imageObject[int((280/1776)*shape_1):shape_1, int((380/2364)*shape_2):int((2100/2364)*shape_2)] 
 
-    _, threshold = cv2.threshold(cropped, 105, 255, cv2.THRESH_BINARY) 
+    _, threshold = cv2.threshold(imageObject, 180, 255, cv2.THRESH_BINARY) 
     
     threshold = canny(threshold)
     

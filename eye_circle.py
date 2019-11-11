@@ -14,11 +14,8 @@ def circle(name_count, frame):
   height = edged_image.shape[0]
   width = edged_image.shape[1]
 
-<<<<<<< HEAD
-  Rmin = 30 #Change it to 20 if 30 doesn't work
-=======
-  Rmin = 25
->>>>>>> 8966d20524578ef589bdd0bb818ddac6788be69b
+
+  Rmin = 30
   Rmax = 50
 
   # Initialise Accumulator as a Dictionary with x0, y0 and r as tuples and votes as values
