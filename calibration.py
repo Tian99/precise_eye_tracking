@@ -1,11 +1,10 @@
 import numpy as np
-import read_matrix
 import math
 from random import sample   
 
 #Read the input first
-matrix_2D_a = read_matrix.matrix('input/pts2d-pic_a.txt')
-matrix_2D_b = read_matrix.matrix('input/pts2d-pic_b.txt')
+#matrix_2D_a = read_matrix.matrix('input/pts2d-pic_a.txt')
+#matrix_2D_b = read_matrix.matrix('input/pts2d-pic_b.txt')
 
 def get_matrix(rand_list, matrix_3D, matrix_2D, matrix_3D_M, matrix_2D_M):
     for j in rand_list:
@@ -84,7 +83,7 @@ def appending(matrix_2D_a, matrix_2D_b):
     # print(f)
     return f
 
-f = appending(matrix_2D_a, matrix_2D_b)
+#f = appending(matrix_2D_a, matrix_2D_b)
 
 #residual(matrix_2D_b, matrix_2D_a, f)
 #print(residual(matrix_2D_b, matrix_2D_a, f))

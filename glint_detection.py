@@ -15,7 +15,7 @@ def circle_glint(name_count, frame):
   width = edged_image.shape[1]
 
   Rmin = 10
-  Rmax = 30
+  Rmax = 15
 
   # Initialise Accumulator as a Dictionary with x0, y0 and r as tuples and votes as values
   accumulator = {}
@@ -25,11 +25,11 @@ def circle_glint(name_count, frame):
     for x in range(0,width):
       # If an edge pixel is found..
       if edged_image.item(y,x) >= 255:
-       
+
         for r in range(Rmin,Rmax,2):
           for t in range(0,360,2):
 
-            #Cast it to a new coordinates 
+            #Cast it to a new coordinates
             x0 = int(x-(r*math.cos(math.radians(t))))
             y0 = int(y-(r*math.sin(math.radians(t))))
 
@@ -42,7 +42,7 @@ def circle_glint(name_count, frame):
   #print(accumulator
   #Iterate through the dictionary to fid the max values
   max_cor = [] #Store the coordinates
-  max_collec = [] #Store the max number 
+  max_collec = [] #Store the max number
   max_coordinate = None
   max_value = 0
   count = 2 #First try 15
@@ -55,7 +55,7 @@ def circle_glint(name_count, frame):
 
       max_collec.append(max_value)
       #Zero out max
-      max_value = 0 
+      max_value = 0
       #Append max position
       max_cor.append(max_coordinate)
       #Zero out that position
@@ -71,21 +71,3 @@ def circle_glint(name_count, frame):
     cv2.imwrite('data_glint/kang%05d.png'%name_count, original_image)
 
   return max_cor, max_collec
-
-
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
