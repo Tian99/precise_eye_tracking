@@ -14,12 +14,9 @@ def circle(name_count, frame):
   height = edged_image.shape[0]
   width = edged_image.shape[1]
 
-<<<<<<< HEAD
-  Rmin = 30 #Change it to 20 if 30 doesn't work
-=======
-  Rmin = 25
->>>>>>> 8966d20524578ef589bdd0bb818ddac6788be69b
-  Rmax = 50
+
+  Rmin = 20
+  Rmax = 40
 
   # Initialise Accumulator as a Dictionary with x0, y0 and r as tuples and votes as values
   accumulator = {}
@@ -74,6 +71,7 @@ def circle(name_count, frame):
 
   for x, y, r in max_cor:
     cv2.circle(original_image, (x,y), r, (0,0,255))
-    cv2.imwrite('data_pupil/kang%05d.png'%name_count, original_image)
+    #Change back to data_pupil/
+    cv2.imwrite('frame_testing/kang%05d.png'%name_count, original_image)
 
   return max_cor, max_collec
