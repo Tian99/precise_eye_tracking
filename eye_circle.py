@@ -16,7 +16,7 @@ def circle(name_count, frame):
 
 
   Rmin = 20
-  Rmax = 40
+  Rmax = 50
 
   # Initialise Accumulator as a Dictionary with x0, y0 and r as tuples and votes as values
   accumulator = {}
