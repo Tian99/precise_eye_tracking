@@ -36,6 +36,10 @@ def main():
     #Got the best threshold value
     #Find the name in testing result which gives you the best
     V, L, H, name = pre_test(random, k)
+
+    print(V, L, H, name)
+
+    #Once successfully find the best
     
 
 #///////////////////////////////////////////////
