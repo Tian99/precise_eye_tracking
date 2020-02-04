@@ -4,10 +4,10 @@ import cv2
 
 
 def determine(image, k):
-    guessing = []
-    count = 0
     #Get all the possible canny image throught all the threshold
     #The eyeball should always be the darkest pixel in the image, so the uppert would be set to 255 for now
+    guessing = []
+    count = 0
     uppert = 255
 
     #Set lower t between 50 and 120 
