@@ -1,14 +1,14 @@
 import cv2
 import sys
 import random
-from pre_determination import determine 
+import pickle
 from eye_blur import blur
 from eye_canny import canny
+from eye_circle import circle
 from enhancement import enhance
 from threshold import threshold
-from eye_circle import circle
+from pre_determination import determine 
 from glint_detection import circle_glint
-import pickle
 
 class PupilTracking():
 
@@ -45,12 +45,13 @@ class PupilTracking():
             exit()
         return video
 
-    def pre_test(self,random, k):
+    def pre_test(self, random, k):
         grand_test = []
         for case in random:
+            #Read the file using the name constituted by the random number and naming conventions
             case_name = 'frame_testing/kang%05d.png'%case
             #Read in the image
-            image = cv2.imread('input/testing_set/test0.png')
+            image = cv2.imread(case_name)
             result = determine(image, k)
 
             grand_test.append(result)
@@ -67,18 +68,19 @@ class PupilTracking():
 
         return V, L, H, name
 
-    def rand(self,number_frame, k):
+    #To get 20 random frame to test out of all the frames
+    def rand(self, number_frame, k):
         rand = []
         for i in range(k):
-            r=random.randint(0, number_frame)
+            r = random.randint(0, number_frame)
             if r not in rand: rand.append(r)
         return rand
 
-
-    def to_frame(self,video):
+    #Method to convert the whole video into frames
+    def to_frame(self, video):
         #Video name tracker i
         i = 0
-        cap= cv2.VideoCapture(video)
+        cap = cv2.VideoCapture(video)
 
         while(cap.isOpened()):
             ret, frame = cap.read()

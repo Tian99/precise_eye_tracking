@@ -18,6 +18,7 @@ def determine(image, k):
         #Canny image
         outcome = threshold(image, i, uppert)
         #Run the hough transform on each outcome
+        #count is simply the naning convention
         max_cor, max_collec = circle(count, outcome)
         circle_1, circle_2 = max_collec
         guessing.append([(circle_1+circle_2), i, uppert, 'frame_testing/kang%05d.png'%count])
