@@ -13,30 +13,28 @@ def determine(image, k):
     #Set lower t between 50 and 120 
     lowert = range(50,120)
 
-    for i in lowert:
+    for low in lowert:
         count = count + 1
         #Canny image
-        outcome = threshold(image, i, uppert)
+        outcome = threshold(image, low, uppert)
         #Run the hough transform on each outcome
         #count is simply the naning convention
         max_cor, max_collec = circle(count, outcome)
         circle_1, circle_2 = max_collec
-        guessing.append([(circle_1+circle_2), i, uppert, 'frame_testing/kang%05d.png'%count])
+        #circle_1+circle_2 is the summation of two highest votes with coordinates
+        guessing.append([(circle_1+circle_2), low, uppert, 'frame_testing/kang%05d.png'%count])
 
         print('--------------------------------')
         print('progress:'+str(count/len(lowert)))
         print('with %s more left'%str(k))
         print('--------------------------------')
 
+    #Sort the best overall and get the best result and picture overall
     guessing.sort()
-
     result = guessing[len(guessing)-1]
-
     result_image = cv2.imread(result[3])
-    
     #Write the image to the destinated folder to better examine
     cv2.imwrite('testing_result/%s.png'%i, result_image)
-    #return both lower threshold and higher threshold and their vote
     return result
 
 

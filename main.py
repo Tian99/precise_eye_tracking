@@ -50,22 +50,19 @@ class PupilTracking():
         for case in random:
             #Read the file using the name constituted by the random number and naming conventions
             case_name = 'frame_testing/kang%05d.png'%case
-            #Read in the image
             image = cv2.imread(case_name)
-            result = determine(image, k)
 
+            #Find the best parameters for different threshold of one image of 20 images picked randomly
+            result = determine(image, k)
             grand_test.append(result)
-            
             #For the sake of keeping track of process
             k = k - 1
-
         grand_test.sort()
-        
         #Best of the best should be
         result = grand_test[len(grand_test) - 1]
-
+        #[(circle_1+circle_2), i, uppert, 'frame_testing/kang%05d.png'%count]
         V, L, H, name = result
-
+        #Here returned the best parameters there is
         return V, L, H, name
 
     #To get 20 random frame to test out of all the frames
@@ -77,11 +74,8 @@ class PupilTracking():
         return rand
 
     #Method to convert the whole video into frames
-    def to_frame(self, video):
-        #Video name tracker i
-        i = 0
+    def to_frame(self, video, i = 0):
         cap = cv2.VideoCapture(video)
-
         while(cap.isOpened()):
             ret, frame = cap.read()
             if ret == False:

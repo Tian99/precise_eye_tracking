@@ -41,18 +41,19 @@ def circle(name_count, frame):
               else:
                 accumulator[(x0,y0,r)]=0
   #print(accumulator
-  #Iterate through the dictionary to fid the max values
+  #Iterate through the dictionary to find the max values
   max_cor = [] #Store the coordinates
   max_collec = [] #Store the max number
   max_coordinate = None
   max_value = 0
-  count = 2 #First try 15
+  count = 2 #First try 2
 
+  #Somehow it is ranked from highest to lowest
   for i in range(count):
       for k, v in accumulator.items():
           if v > max_value:
-              max_value = v
-              max_coordinate = k
+            max_value = v
+            max_coordinate = k
 
       max_collec.append(max_value)
       #Zero out max
@@ -61,6 +62,7 @@ def circle(name_count, frame):
       max_cor.append(max_coordinate)
       #Zero out that position
       accumulator[max_coordinate] = 0
+
   print('big_circle')
   #Show the x,y,and radius
   print(max_cor)
