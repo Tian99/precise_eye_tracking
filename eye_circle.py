@@ -52,6 +52,7 @@ def circle(name_count, frame):
   for i in range(count):
       for k, v in accumulator.items():
           if v > max_value:
+            #Find the max votes in the accumulator
             max_value = v
             max_coordinate = k
 

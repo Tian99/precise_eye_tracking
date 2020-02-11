@@ -27,7 +27,7 @@ class PupilTracking():
         ''''''
         super().__init__()
         video = self.user_input()
-        self.num_tests = 20 
+        self.num_tests = 20
         self.number_frame = self.to_frame(video)
         self.random_num = self.rand(self.number_frame, self.num_tests)
         self.V, self.L, self.H, self.name_pic = self.pre_test(self.random_num, self.num_tests)
@@ -35,7 +35,16 @@ class PupilTracking():
         #Now print the results out and take a look
         print(self.V, self.L, self.H, self.name_pic)
 
-    #Once successfully find the best
+        #Analyzing finished
+        print('pretesting finished, starting analying the collection pictures using the paramaters')
+        self.video_analyze()
+
+    def video_analyze(self, self.L, self.H):
+        outcome = threshold(image, self.L, self.H)
+        max_cor, max_collec = circle(count, outcome)
+        #Video analyze finished
+        print('Video analyze finished')
+
 
     def user_input(self):
         try:
@@ -60,7 +69,7 @@ class PupilTracking():
         grand_test.sort()
         #Best of the best should be
         result = grand_test[len(grand_test) - 1]
-        #[(circle_1+circle_2), i, uppert, 'frame_testing/kang%05d.png'%count]
+        #[(circle_1+circle_2), lower, uppert, 'frame_testing/kang%05d.png'%count]
         V, L, H, name = result
         #Here returned the best parameters there is
         return V, L, H, name
@@ -75,6 +84,7 @@ class PupilTracking():
 
     #Method to convert the whole video into frames
     def to_frame(self, video, i = 0):
+        print('Starting to convert video to frames')
         cap = cv2.VideoCapture(video)
         while(cap.isOpened()):
             ret, frame = cap.read()
