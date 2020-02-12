@@ -9,6 +9,7 @@ def determine(image, k):
     guessing = []
     count = 0
     uppert = 255
+    i = 0
 
     #Set lower t between 50 and 120 
     lowert = range(50,120)
@@ -19,7 +20,7 @@ def determine(image, k):
         outcome = threshold(image, low, uppert)
         #Run the hough transform on each outcome
         #count is simply the naning convention
-        max_cor, max_collec = circle(count, outcome)
+        max_cor, max_collec, circled_cases = circle(count, outcome)
         circle_1, circle_2 = max_collec
         #circle_1+circle_2 is the summation of two highest votes with coordinates
         guessing.append([(circle_1+circle_2), low, uppert, 'frame_testing/kang%05d.png'%count])
@@ -33,8 +34,10 @@ def determine(image, k):
     guessing.sort()
     result = guessing[len(guessing)-1]
     result_image = cv2.imread(result[3])
+    cv2.imwrite('pretesting/%s.png'%i, circled_cases)
     #Write the image to the destinated folder to better examine
     cv2.imwrite('testing_result/%s.png'%i, result_image)
+    i+=1
     return result
 
 

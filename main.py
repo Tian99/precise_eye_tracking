@@ -2,10 +2,10 @@ import cv2
 import sys
 import random
 import pickle
+import pic_analyze
 from eye_blur import blur
 from eye_canny import canny
 from eye_circle import circle
-from enhancement import enhance
 from threshold import threshold
 from pre_determination import determine 
 from glint_detection import circle_glint
@@ -37,9 +37,10 @@ class PupilTracking():
 
         #Analyzing finished
         print('pretesting finished, starting analying the collection pictures using the paramaters')
-        self.video_analyze()
+        
+        self.video_analyze(self.L, self.H)
 
-    def video_analyze(self, self.L, self.H):
+    def video_analyze(self, L, H):
         outcome = threshold(image, self.L, self.H)
         max_cor, max_collec = circle(count, outcome)
         #Video analyze finished
@@ -49,9 +50,11 @@ class PupilTracking():
     def user_input(self):
         try:
             video = sys.argv[1]
+
         except IndexError:
             print('Please type in the video file')
             exit()
+
         return video
 
     def pre_test(self, random, k):
@@ -66,6 +69,7 @@ class PupilTracking():
             grand_test.append(result)
             #For the sake of keeping track of process
             k = k - 1
+
         grand_test.sort()
         #Best of the best should be
         result = grand_test[len(grand_test) - 1]
@@ -80,6 +84,7 @@ class PupilTracking():
         for i in range(k):
             r = random.randint(0, number_frame)
             if r not in rand: rand.append(r)
+
         return rand
 
     #Method to convert the whole video into frames
@@ -91,6 +96,10 @@ class PupilTracking():
             if ret == False:
                 break
             #Write out individual frames just to test
+            #Downscale the frame
+            height = frame.shape[0]
+            width = frame.shape[1]
+            frame = cv2.resize(frame,(int(height/10), int(width/8)))
             cv2.imwrite('frame_testing/kang%05d.png'%i,frame)
             #Then throw the image to threshold to process
             i+=1

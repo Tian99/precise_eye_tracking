@@ -73,8 +73,6 @@ def circle(name_count, frame):
   original_image = cv2.cvtColor(original_image, cv2.COLOR_GRAY2RGB)
 
   for x, y, r in max_cor:
-    cv2.circle(original_image, (x,y), r, (0,0,255))
-    #Change back to data_pupil/
-    # cv2.imwrite('frame_testing/kang%05d.png'%name_count, original_image)
+    circled_cases = cv2.circle(original_image, (x,y), r, (0,0,255))
 
-  return max_cor, max_collec
+  return max_cor, max_collec, circled_cases
