@@ -99,7 +99,7 @@ class PupilTracking():
             #Downscale the frame
             height = frame.shape[0]
             width = frame.shape[1]
-            frame = cv2.resize(frame,(int(height/10), int(width/8)))
+            frame = cv2.resize(frame,(int(height/9), int(width/9)))
             cv2.imwrite('frame_testing/kang%05d.png'%i,frame)
             #Then throw the image to threshold to process
             i+=1
