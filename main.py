@@ -35,6 +35,9 @@ class PupilTracking():
         #Now print the results out and take a look
         print(self.V, self.L, self.H, self.name_pic)
 
+        #Now just output the test case image to testing result so that the user could compare where the parameters got is legid
+        
+
         #Analyzing finished
         print('pretesting finished, starting analying the collection pictures using the paramaters')
         

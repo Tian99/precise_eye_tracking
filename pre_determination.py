@@ -6,10 +6,9 @@ import cv2
 def determine(image, k):
     #Get all the possible canny image throught all the threshold
     #The eyeball should always be the darkest pixel in the image, so the uppert would be set to 255 for now
-    guessing = []
     count = 0
     uppert = 255
-    i = 0
+    guessing = []
 
     #Set lower t between 50 and 120 
     lowert = range(50,120)
@@ -34,10 +33,9 @@ def determine(image, k):
     guessing.sort()
     result = guessing[len(guessing)-1]
     result_image = cv2.imread(result[3])
-    cv2.imwrite('pretesting/%s.png'%i, circled_cases)
-    #Write the image to the destinated folder to better examine
-    cv2.imwrite('testing_result/%s.png'%i, result_image)
-    i+=1
+    # cv2.imwrite('pretesting/%s.png'%i, circled_cases)
+    # #Write the image to the destinated folder to better examine
+    # cv2.imwrite('testing_result/%s.png'%i, result_image)
     return result
 
 
