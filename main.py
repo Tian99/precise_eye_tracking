@@ -3,7 +3,6 @@ import sys
 import random
 import pickle
 import pic_analyze
-from eye_blur import blur
 from eye_canny import canny
 from eye_circle import circle
 from threshold import threshold
@@ -30,8 +29,11 @@ class PupilTracking():
         self.num_tests = 20
         self.number_frame = self.to_frame(video)
         self.random_num = self.rand(self.number_frame, self.num_tests)
-        self.V, self.L, self.H, self.name_pic = self.pre_test(self.random_num, self.num_tests)
-
+        try:
+        	self.V, self.L, self.H, self.name_pic = self.pre_test(self.random_num, self.num_tests)
+        except:
+        	print('Resizing factors too big to be useful')
+        	exit()
         #Now print the results out and take a look
         print(self.V, self.L, self.H, self.name_pic)
 
@@ -41,7 +43,7 @@ class PupilTracking():
         #Analyzing finished
         print('pretesting finished, starting analying the collection pictures using the paramaters')
         
-        self.video_analyze(self.L, self.H)
+        # self.video_analyze(self.L, self.H)
 
     def video_analyze(self, L, H):
         outcome = threshold(image, self.L, self.H)
