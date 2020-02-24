@@ -48,6 +48,9 @@ class PupilTracking():
     def video_analyze(self, L, H):
     	#Self.L and seklf.H represent the lower and higher bound of the threshold
         outcome = threshold(image, self.L, self.H)
+
+        #Now onyly need to analyze those before and after the cuing time + ro - 5s i suppose
+
         max_cor, max_collec = circle(count, outcome)
         #Video analyze finished
         print('Video analyze finished')
