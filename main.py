@@ -5,10 +5,12 @@ import pickle
 import pic_analyze
 from eye_canny import canny
 from eye_circle import circle
+from csv_analysis import read
 from threshold import threshold
 from pre_determination import determine 
 from glint_detection import circle_glint
 
+#The video frame is mostly 60 fps
 class PupilTracking():
 
     def __init__(self):
@@ -26,6 +28,7 @@ class PupilTracking():
         ''''''
         super().__init__()
         video = self.user_input()
+        filename = 'input/testing_set/testing_1/10997_20180818_mri_1_view.csv'
         self.num_tests = 20
         self.number_frame = self.to_frame(video)
         self.random_num = self.rand(self.number_frame, self.num_tests)
@@ -34,16 +37,25 @@ class PupilTracking():
         except:
         	print('Resizing factors too big to be useful')
         	exit()
+        #list of list that contains the whole set of testing data
+        sets = self.file_data(filename)
+        print(sets)
         #Now print the results out and take a look
         print(self.V, self.L, self.H, self.name_pic)
-
-        #Now just output the test case image to testing result so that the user could compare where the parameters got is legid
-        
+        #Now do the analysis set by set// Starting to code the main part of the program        
 
         #Analyzing finished
         print('pretesting finished, starting analying the collection pictures using the paramaters')
         
         # self.video_analyze(self.L, self.H)
+    def file_data(self, filename):
+    	current = []
+    	cue, vgs, dly, mgs = read(filename)
+    	for i in range(0, len(cue)):
+    		current.append([cue[i], vgs[i], dly[i], mgs[i]])
+    	#Now start to narrow down the analysis rang
+    	#now the video file is 60 fps, and every video file is named according to the sequence
+    	return current
 
     def video_analyze(self, L, H):
     	#Self.L and seklf.H represent the lower and higher bound of the threshold
@@ -54,7 +66,6 @@ class PupilTracking():
         max_cor, max_collec = circle(count, outcome)
         #Video analyze finished
         print('Video analyze finished')
-
 
     def user_input(self):
         try:
@@ -108,7 +119,10 @@ class PupilTracking():
             #Downscale the frame
             height = frame.shape[0]
             width = frame.shape[1]
+            #Need to conserve one for the later analysis
+            keep = frame
             frame = cv2.resize(frame,(int(height/9), int(width/9)))
+            cv2.imwrite('analysis_set/kang%05d.png'%i,keep)
             cv2.imwrite('frame_testing/kang%05d.png'%i,frame)
             #Then throw the image to threshold to process
             i+=1
