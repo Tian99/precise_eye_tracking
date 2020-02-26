@@ -27,9 +27,10 @@ class PupilTracking():
         #Number of image traisl you want
         ''''''
         super().__init__()
+        self.fps = 60
         video = self.user_input()
         filename = 'input/testing_set/testing_1/10997_20180818_mri_1_view.csv'
-        self.num_tests = 20
+        self.num_tests = 1
         self.number_frame = self.to_frame(video)
         self.random_num = self.rand(self.number_frame, self.num_tests)
         try:
@@ -43,9 +44,40 @@ class PupilTracking():
         #Now print the results out and take a look
         print(self.V, self.L, self.H, self.name_pic)
         #Now do the analysis set by set// Starting to code the main part of the program        
-
-        #Analyzing finished
         print('pretesting finished, starting analying the collection pictures using the paramaters')
+
+        self.frame_retrieve(sets)
+    
+    def frame_retrieve(self.sets):
+    	#Only need to get the frame around the critical area
+    	#60 frame/second
+    	for i in sets:
+    		t_cue = i[0]
+    		t_vgs = i[1]
+    		t_dly = i[2]
+    		t_mgs = i[3]
+
+	    	#Now, after the cue, the pupil should be staring at the center 
+	    	show_center = range(fps*t_cue, fps*t_vgs)
+	    	#After vgs, the eye should be staring at the picture
+	    	show_loc = range(fps*t_vgs, fps*t_dly)
+	    	#After dly, it should be staring at the center
+	    	hide_center = range(fps*t_dly, fps*t_mgs)
+	    	#After t_mgs, it should be staring at wherever it remembered
+	    	#Turns out it always gonna be 2s --> for now
+	    	hide_pic = range(fps*t_mgs, fps*(t_mgs + 2))
+
+	    	#Read the critical frame from the folder
+	    	for t in range(show_center):
+	    		
+
+
+
+
+
+
+
+
         
         # self.video_analyze(self.L, self.H)
     def file_data(self, filename):
@@ -60,9 +92,7 @@ class PupilTracking():
     def video_analyze(self, L, H):
     	#Self.L and seklf.H represent the lower and higher bound of the threshold
         outcome = threshold(image, self.L, self.H)
-
         #Now onyly need to analyze those before and after the cuing time + ro - 5s i suppose
-
         max_cor, max_collec = circle(count, outcome)
         #Video analyze finished
         print('Video analyze finished')
