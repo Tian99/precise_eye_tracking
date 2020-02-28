@@ -47,47 +47,51 @@ class PupilTracking():
         #Now do the analysis set by set// Starting to code the main part of the program        
         print('pretesting finished, starting analying the collection pictures using the paramaters')
 
-        self.frame_retrieve(sets, self.L, self.H)
+        output_sets = self.frame_retrieve(sets, self.L, self.H)
+        #Now the output_sets is obtained, next setp isd to analyze it.
+
+        print('Data gethering complete')
+        print(output_sets)
     
     def frame_retrieve(self, sets, L, H):
+        self.dic = {}
+        output_sets = []
         #Only need to get the frame around the critical area
         #60 frame/second
-        for i in sets:
-            t_cue = i[0]
-            t_vgs = i[1]
-            t_dly = i[2]
-            t_mgs = i[3]
+        ########################################################################
+        #Change it to for loop later
+        ########################################################################
+        # for i in sets:
+        i = sets[0]
+        t_cue = i[0]
+        t_vgs = i[1]
+        t_dly = i[2]
+        t_mgs = i[3]
 
-            #Now, after the cue, the pupil should be staring at the center 
-            show_center = range(self.fps*int(t_cue), self.fps*int(t_vgs))
-            #After vgs, the eye should be staring at the picture
-            show_loc = range(self.fps*int(t_vgs), self.fps*int(t_dly))
-            #After dly, it should be staring at the center
-            hide_center = range(self.fps*int(t_dly), self.fps*int(t_mgs))
-            #After t_mgs, it should be staring at wherever it remembered
-            #Turns out it always gonna be 2s --> for now
-            hide_pic = range(self.fps*int(t_mgs), self.fps*(int(t_mgs) + 2))
+        #Now, after the cue, the pupil should be staring at the center 
+        show_center = range(self.fps*int(t_cue), self.fps*int(t_vgs))
+        #After vgs, the eye should be staring at the picture
+        show_loc = range(self.fps*int(t_vgs), self.fps*int(t_dly))
+        #After dly, it should be staring at the center
+        hide_center = range(self.fps*int(t_dly), self.fps*int(t_mgs))
+        #After t_mgs, it should be staring at wherever it remembered
+        #Turns out it always gonna be 2s --> for now
+        hide_pic = range(self.fps*int(t_mgs), self.fps*(int(t_mgs) + 2))
 
-            collections = [show_center, show_loc, hide_center, hide_pic]
+        collections = [show_center, show_loc, hide_center, hide_pic]
 
-            #Read the critical frame from the folder
-            self.critical_frame(collections, L, H)
+        #Read the critical frame from the folder
+        output_sets.append(self.critical_frame(collections, L, H))
 
-                
-
-
-
-
-
+        return output_sets
 
 
     def critical_frame(self, collections, L, H):
         count = 0
-        dic = {}
-        dic['s_center'] = []
-        dic['s_loc'] = []
-        dic['h_center'] = []
-        dic['h_loc'] = []
+        self.dic['s_center'] = []
+        self.dic['s_loc'] = []
+        self.dic['h_center'] = []
+        self.dic['h_loc'] = []
 
         for i in range(0, len(collections)):
             for file in collections[i]:
@@ -96,23 +100,21 @@ class PupilTracking():
                 outcome = threshold(image, L, H)
                 max_cor, max_collec, circled_cases= circle(count, outcome)
                 if i == 0:
-                    dic['s_center'].append(max_cor)
+                    self.dic['s_center'].append(max_cor)
                 elif i == 1:
-                    dic['s_loc'].append(max_cor)
+                    self.dic['s_loc'].append(max_cor)
                 elif i == 2:
-                    dic['h_center'].append(max_cor)
+                    self.dic['h_center'].append(max_cor)
                 elif i == 3:
-                    dic['h_loc'].append(max_cor)
+                    self.dic['h_loc'].append(max_cor)
                 else:
                     print('Something went wrong')
                     exit()
 
                 count += 1
-
-                print('progress:{}'.format(count/160))
-            print('one out of four section done')
-
             count = 0
+            print('{}out of four section done'.format(i+1))
+            print('\n\n')
 
 
         
