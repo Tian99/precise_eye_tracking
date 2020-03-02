@@ -6,6 +6,7 @@ import pic_analyze
 from eye_canny import canny
 from eye_circle import circle
 from csv_analysis import read
+from plot_data import plotting
 from threshold import threshold
 from pre_determination import determine 
 from glint_detection import circle_glint
@@ -30,6 +31,9 @@ class PupilTracking():
         self.fps = 60
         video = self.user_input()
         filename = 'input/testing_set/testing_1/10997_20180818_mri_1_view.csv'
+        ######################################################################
+        #change num_tests to 20 later
+        ######################################################################
         self.num_tests = 1
         self.number_frame = self.to_frame(video)
         print('To frame successful')
@@ -49,12 +53,11 @@ class PupilTracking():
 
         output_sets = self.frame_retrieve(sets, self.L, self.H)
         #Now the output_sets is obtained, next setp isd to analyze it.
-
         print('Data gethering complete')
         print(output_sets)
-    
+        print('Starting to plot the data')
+        plot(output_sets)
     def frame_retrieve(self, sets, L, H):
-        self.dic = {}
         output_sets = []
         #Only need to get the frame around the critical area
         #60 frame/second
@@ -85,13 +88,14 @@ class PupilTracking():
 
         return output_sets
 
-
+    #Append every frame data to the dictionary and return it back in a big listy
     def critical_frame(self, collections, L, H):
         count = 0
-        self.dic['s_center'] = []
-        self.dic['s_loc'] = []
-        self.dic['h_center'] = []
-        self.dic['h_loc'] = []
+        dic = {}
+        dic['s_center'] = []
+        dic['s_loc'] = []
+        dic['h_center'] = []
+        dic['h_loc'] = []
 
         for i in range(0, len(collections)):
             for file in collections[i]:
@@ -100,13 +104,13 @@ class PupilTracking():
                 outcome = threshold(image, L, H)
                 max_cor, max_collec, circled_cases= circle(count, outcome)
                 if i == 0:
-                    self.dic['s_center'].append(max_cor)
+                    dic['s_center'].append(max_cor)
                 elif i == 1:
-                    self.dic['s_loc'].append(max_cor)
+                    dic['s_loc'].append(max_cor)
                 elif i == 2:
-                    self.dic['h_center'].append(max_cor)
+                    dic['h_center'].append(max_cor)
                 elif i == 3:
-                    self.dic['h_loc'].append(max_cor)
+                    dic['h_loc'].append(max_cor)
                 else:
                     print('Something went wrong')
                     exit()
@@ -115,6 +119,7 @@ class PupilTracking():
             count = 0
             print('{}out of four section done'.format(i+1))
             print('\n\n')
+        return dic
 
 
         
@@ -182,7 +187,9 @@ class PupilTracking():
             width = frame.shape[1]
             #Need to conserve one for the later analysis
             keep = frame
+            #The first resize is for the real_analysis
             keep = cv2.resize(keep,(int(height/3), int(width/3)))
+            #the second resize if for the analysis when determining parameters
             frame = cv2.resize(frame,(int(height/8), int(width/8)))
             cv2.imwrite('analysis_set/kang%05d.png'%i,keep)
             cv2.imwrite('frame_testing/kang%05d.png'%i,frame)

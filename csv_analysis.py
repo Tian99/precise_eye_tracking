@@ -1,5 +1,5 @@
 import pandas as pd
-import dataframe as df
+from pandas import DataFrame as df
 
 def read(filename):
 	cue = []
