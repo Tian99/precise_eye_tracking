@@ -34,7 +34,7 @@ class PupilTracking():
         ######################################################################
         #change num_tests to 20 later
         ######################################################################
-        self.num_tests = 1
+        self.num_tests = 5
         self.number_frame = self.to_frame(video)
         print('To frame successful')
         self.random_num = self.rand(self.number_frame, self.num_tests)
@@ -188,7 +188,7 @@ class PupilTracking():
             #Need to conserve one for the later analysis
             keep = frame
             #The first resize is for the real_analysis
-            keep = cv2.resize(keep,(int(height/3), int(width/3)))
+            keep = cv2.resize(keep,(int(height/2), int(width/2)))
             #the second resize if for the analysis when determining parameters
             frame = cv2.resize(frame,(int(height/8), int(width/8)))
             cv2.imwrite('analysis_set/kang%05d.png'%i,keep)
