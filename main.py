@@ -54,9 +54,9 @@ class PupilTracking():
         output_sets = self.frame_retrieve(sets, self.L, self.H)
         #Now the output_sets is obtained, next setp isd to analyze it.
         print('Data gethering complete')
-        print(output_sets)
         print('Starting to plot the data')
-        plot(output_sets)
+        plotting(output_sets)
+
     def frame_retrieve(self, sets, L, H):
         output_sets = []
         #Only need to get the frame around the critical area
