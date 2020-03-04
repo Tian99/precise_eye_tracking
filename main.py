@@ -188,7 +188,7 @@ class PupilTracking():
             #Need to conserve one for the later analysis
             keep = frame
             #The first resize is for the real_analysis
-            keep = cv2.resize(keep,(int(height/2), int(width/2)))
+            keep = cv2.resize(keep,(int(height), int(width)))
             #the second resize if for the analysis when determining parameters
             frame = cv2.resize(frame,(int(height/8), int(width/8)))
             cv2.imwrite('analysis_set/kang%05d.png'%i,keep)

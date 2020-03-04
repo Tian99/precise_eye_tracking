@@ -66,6 +66,7 @@ def circle(name_count, frame):
 
   print('big_circle')
   #Show the x,y,and radius
+  #If the x and y diverge too far away from each other, just cateforize it as the eye close
   print(max_cor)
   #Show the vote on each circle
   print(max_collec)
