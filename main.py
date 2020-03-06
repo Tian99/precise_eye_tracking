@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import cv2
 import sys
 import random
@@ -14,7 +16,7 @@ from glint_detection import circle_glint
 #The video frame is mostly 60 fps
 class PupilTracking():
 
-    def __init__(self):
+    def __init__(self, video, timing_fname="", show=False):
         ''''''
         #Three phases: 
         #1. determination the best way to transfrom an image into computer readable, 
@@ -29,8 +31,10 @@ class PupilTracking():
         ''''''
         super().__init__()
         self.fps = 60
-        video = self.user_input()
-        filename = 'input/testing_set/testing_1/10997_20180818_mri_1_view.csv'
+        self.show = show
+        if timing_fname == "":
+            timing_fname = 'input/testing_set/testing_1/10997_20180818_mri_1_view.csv'
+            print("Warning: using default timing %s" % timing_fname)
         ######################################################################
         #change num_tests to 20 later
         ######################################################################
@@ -44,7 +48,7 @@ class PupilTracking():
             print('Resizing factors too big to be useful')
             exit()
         #list of list that contains the whole set of testing data
-        sets = self.file_data(filename)
+        sets = self.file_data(timing_fname)
         print(sets)
         #Now print the results out and take a look
         print(self.V, self.L, self.H, self.name_pic)
@@ -97,7 +101,8 @@ class PupilTracking():
         dic['h_center'] = []
         dic['h_loc'] = []
 
-        for i in range(0, len(collections)):
+        ncol = len(collections)
+        for i in range(0, ncol):
             for file in collections[i]:
                 case_name = 'analysis_set/kang%05d.png'%file
                 image = cv2.imread(case_name)
@@ -117,31 +122,22 @@ class PupilTracking():
 
                 count += 1
             count = 0
-            print('{}out of four section done'.format(i+1))
+            print('{}/{} section done'.format(i+1, ncol))
             print('\n\n')
         return dic
 
 
         
         # self.video_analyze(self.L, self.H)
-    def file_data(self, filename):
+    def file_data(self, timing_fname):
         current = []
-        cue, vgs, dly, mgs = read(filename)
+        cue, vgs, dly, mgs = read(timing_fname)
         for i in range(0, len(cue)):
             current.append([cue[i], vgs[i], dly[i], mgs[i]])
         #Now start to narrow down the analysis rang
         #now the video file is 60 fps, and every video file is named according to the sequence
         return current
 
-    def user_input(self):
-        try:
-            video = sys.argv[1]
-
-        except IndexError:
-            print('Please type in the video file')
-            exit()
-
-        return video
 
     def pre_test(self, random, k):
         grand_test = []
@@ -198,7 +194,15 @@ class PupilTracking():
         #Total number of frames
         return i
 
+
 if __name__ == '__main__':
-    PupilTracking()
+
+    # usage if wrong number of input args
+    if len(sys.argv) < 2 or len(sys.argv) > 3:
+        print("USAGE: %s video.mov [timing.csv]" % sys.argv[0])
+        exit()
+
+    # pass all cli arguments (video, maybe timing) into class
+    PupilTracking(*sys.argv[1:], show=True)
 
 
