@@ -4,9 +4,11 @@
 ########################################
 
 import cv2,sys
+import functools
+import math
+import multiprocessing
 import numpy as np
 import operator
-import math
 
 def circle(name_count, frame):
   original_image = frame # Input file image
@@ -73,7 +75,96 @@ def circle(name_count, frame):
 
   original_image = cv2.cvtColor(original_image, cv2.COLOR_GRAY2RGB)
 
+  # BUG? - why do this for each? only second is returned?
   for x, y, r in max_cor:
     circled_cases = cv2.circle(original_image, (x,y), r, (0,0,255))
 
   return max_cor, max_collec, circled_cases
+
+def ccast(yx, r, t, width, height):
+    """
+    at angle t and radius r
+    return if x,y is within range
+    >>> plt.imshow(ccast(yx,22,180,width,height))
+    """
+    #Cast it to a new coordinates
+    y0 = (yx[0] - (r * math.sin(t))).astype(int) 
+    x0 = (yx[1] - (r * math.cos(t))).astype(int) 
+    # Checking if the center is within the range of image
+    i = np.logical_and.reduce((y0 > 0, y0< height, x0>0, x0<width))
+    # create matrix with one if in range
+    v = np.zeros([height, width])
+    if(len(i) > 0):
+        v[y0[i],x0[i]] = 1
+    return v
+
+def sum_angles(yx, r, w, h, by=2):
+    """ sum the circles for over all angles """
+    angles = [math.radians(t) for t in range(0, 360, by)]
+    s = np.sum([ccast(yx, r, a, w, h) for a in angles], axis=0)
+    return(s)
+
+def plot_radlist(rs):
+    import matplotlib.pyplot as plt
+    ns = math.sqrt(len(rs))
+    fg, ax = plt.subplots(math.ceil(ns),math.ceil(ns))
+    for i, r in enumerate(rs):
+        x=math.floor(i/ns)
+        y=i%math.ceil(ns)
+        mi=np.unravel_index(np.argmax(r), r.shape)
+        mv=r[mi]
+        ax[x,y].imshow(r)
+        ax[x,y].set_title("r=%d; m=%d @ %s" % (radi[i], mv, mi))
+        ax[x,y].axis('off')
+        ax[x,y].annotate("%d" % mv, xy=mi, color='white')
+
+
+def circle_vectorized(frame, N=2, show=False):
+    """
+    use vectorized matricies to calc circle
+    >>> frame=threshold(cv2.imread('./analysis_set/kang00013.png'),100,8)
+    >>> # import matplotlib.pyplot as plt; plt.ion(); plt.imshow(frame);
+    """
+    (height, width) = frame.shape
+    (Rmin, Rmax) = (20, 50)
+  
+    # find coords of edges
+    yx = np.where(frame >= 255)
+    # large list of r,t pairs for every r_min-r_max and degree (by 2)
+    # TODO: there is porbably math to show some of this space is redundant?
+    #   e.g. exclude x,y Rmin from image sides?
+    #   xy = xy[xy[:,0] > Rmin and xy[:,0] < width - Rmax, xy[0,:] > Rmin and xy[0,:] < height - Rmax]
+    #rng = [(r,math.radians(t)) for r in range(Rmin, Rmax, 2) for t in range(0, 360, 2)]
+    radi = range(Rmin,Rmax,2)
+    # for all the xy pairs on an edge,
+    #  make a cirlce matrix for each angle
+    #  and sum
+    rs = [sum_angles(yx, r, width, height) for r in radi]
+
+    # view it maybe
+    if show: plot_radlist(rs)
+    
+    
+    # # -- best only -- 
+    # (ri, yi, xi) = np.unravel_index(np.argmax(rs),shape)
+    # max_value = rs[ri][yi,xi]
+    # max_coordinate = (xi,yi,radi[ri])
+
+    # -- top N --
+    rs = np.array(rs)
+    i = np.argpartition(rs.flatten(), -N)[-N:]
+    vryx = [[rs[ii], radi[ii[0]], *ii[1:] ] for ii in
+             [np.unravel_index(ii, rs.shape) for ii in i]]
+    
+  
+    print('big_circle vryx')
+    print(vryx)
+
+    original_image = cv2.cvtColor(frame, cv2.COLOR_GRAY2RGB)
+
+    for (v, y, x, r) in vryx:
+      circled_cases = cv2.circle(original_image, (x,y), r, (0,0,255))
+  
+    return(vryx)
+
+    return max_cor, max_collec, circled_cases
