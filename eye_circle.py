@@ -153,17 +153,18 @@ def circle_vectorized(frame, N=2, show=False):
     # -- top N --
     rs = np.array(rs)
     i = np.argpartition(rs.flatten(), -N)[-N:]
-    vryx = [[rs[ii], *ii] for ii in
+    vryx = [[rs[ii], radi[ii[0]], *ii[1:] ] for ii in
              [np.unravel_index(ii, rs.shape) for ii in i]]
     
   
     print('big_circle vryx')
     print(vryx)
-    return(vryx)
 
     original_image = cv2.cvtColor(frame, cv2.COLOR_GRAY2RGB)
 
-    for (v, x, y, r) in vryx:
+    for (v, y, x, r) in vryx:
       circled_cases = cv2.circle(original_image, (x,y), r, (0,0,255))
   
+    return(vryx)
+
     return max_cor, max_collec, circled_cases
