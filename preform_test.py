@@ -2,7 +2,6 @@
 import matplotlib.pyplot as plt
 import timeit
 from eye_circle import circle_vectorized, circle
-plt.ion()
 
 frame=threshold(cv2.imread('./analysis_set/kang00013.png'),100,8)
 
@@ -13,3 +12,7 @@ tc = timeit.timeit(lambda: circle("",frame), number=10)
 # 27.77392174769193
 # >>> tc
 # 47.4045549579896
+
+# also see the nice plots!
+# plt.ion()
+circle_vectorized(frame, show=True)
