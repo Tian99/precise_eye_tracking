@@ -16,42 +16,48 @@ from glint_detection import circle_glint
 #The video frame is mostly 60 fps
 class PupilTracking():
 
-    def __init__(self, video, timing_fname="", show=False):
-        ''''''
-        #Three phases: 
-        #1. determination the best way to transfrom an image into computer readable, 
-        #2. track the pupil and glint movement as precise as possible
-        #3. Use the data provided and the data read, construct amn algorithm to precisely track the slight movement of vector between pupil and glint
+    def __init__(self, video, timing_fname="", num_tests=5, fps=60, show=False):
+        """
+        Three phases: 
+        1. determination the best way to transfrom an image into computer readable, 
+        2. track the pupil and glint movement as precise as possible
+        3. Use the data provided and the data read, construct amn algorithm to precisely track the slight movement of vector between pupil and glint
         
-        #Starting with the first step
-        #pick five instances of image from the colleciton of images framed from the video
-        # Opens the Video file
-        #Video will be read from the command line
-        #Number of image traisl you want
-        ''''''
+        Starting with the first step
+        pick five instances of image from the colleciton of images framed from the video
+         Opens the Video file
+        Video will be read from the command line
+        Number of image traisl you want
+        """
         super().__init__()
-        self.fps = 60
+        self.fps = fps
         self.show = show
+        self.num_tests = num_tests
         if timing_fname == "":
             timing_fname = 'input/testing_set/testing_1/10997_20180818_mri_1_view.csv'
             print("Warning: using default timing %s" % timing_fname)
-        ######################################################################
-        #change num_tests to 20 later
-        ######################################################################
-        self.num_tests = 5
+        
+
+        # convert video to series of frames
         self.number_frame = self.to_frame(video)
         print('To frame successful')
+
+        # get random frames to test on
         self.random_num = self.rand(self.number_frame, self.num_tests)
         try:
             self.V, self.L, self.H, self.name_pic = self.pre_test(self.random_num, self.num_tests)
         except:
             print('Resizing factors too big to be useful')
             exit()
+
         #list of list that contains the whole set of testing data
         sets = self.file_data(timing_fname)
         print(sets)
+        # [[6.0, 8.0, 10.0, 16.0], [20.0, 22.0, 24.0, 30.0], [40.0, 42.0, 44.0, 50.0], ....
+
         #Now print the results out and take a look
         print(self.V, self.L, self.H, self.name_pic)
+
         #Now do the analysis set by set// Starting to code the main part of the program        
         print('pretesting finished, starting analying the collection pictures using the paramaters')
 
@@ -203,6 +209,9 @@ if __name__ == '__main__':
         exit()
 
     # pass all cli arguments (video, maybe timing) into class
-    PupilTracking(*sys.argv[1:], show=True)
+    ######################################################################
+    #TODO: change num_tests to 20 later
+    ######################################################################
+    PupilTracking(*sys.argv[1:], show=True, num_tests=5)
 
 
