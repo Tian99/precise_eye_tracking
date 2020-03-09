@@ -28,6 +28,8 @@ def plotting(dic):
 	ax1.scatter(x_h_center, y_h_center, marker = 'x', c='g', label='thrid')
 	ax1.scatter(x_h_loc, y_h_loc, marker = 'v', c='y', label='forth')
 
+	plt.show()
+
 #Format the data first
 def data_format(dic):
 	new_dic = {}
@@ -40,6 +42,8 @@ def data_format(dic):
 		for j in dic[i]:
 			if abs(j[0][0] - j[1][0]) < 30:
 				new_dic[i].append(j[0])
+
+	return new_dic
 
 def create_x(length):
 	li = []

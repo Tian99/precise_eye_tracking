@@ -39,6 +39,7 @@ class PupilTracking():
         
 
         # convert video to series of frames
+        self.output_sets = []
         self.number_frame = self.to_frame(video)
         print('To frame successful')
 
@@ -61,14 +62,13 @@ class PupilTracking():
         #Now do the analysis set by set// Starting to code the main part of the program        
         print('pretesting finished, starting analying the collection pictures using the paramaters')
 
-        output_sets = self.frame_retrieve(sets, self.L, self.H)
-        #Now the output_sets is obtained, next setp isd to analyze it.
+        self.frame_retrieve(sets, self.L, self.H)
+        #Now the output_sets is obtained, next setp is to analyze it.
         print('Data gethering complete')
         print('Starting to plot the data')
-        plotting(output_sets)
+        plotting(self.output_sets)
 
     def frame_retrieve(self, sets, L, H):
-        output_sets = []
         #Only need to get the frame around the critical area
         #60 frame/second
         ########################################################################
@@ -94,9 +94,7 @@ class PupilTracking():
         collections = [show_center, show_loc, hide_center, hide_pic]
 
         #Read the critical frame from the folder
-        output_sets.append(self.critical_frame(collections, L, H))
-
-        return output_sets
+        self.output_sets.append(self.critical_frame(collections, L, H))
 
     #Append every frame data to the dictionary and return it back in a big listy
     def critical_frame(self, collections, L, H):
@@ -128,6 +126,7 @@ class PupilTracking():
 
                 count += 1
             count = 0
+            print(dic)
             print('{}/{} section done'.format(i+1, ncol))
             print('\n\n')
         return dic
@@ -190,7 +189,7 @@ class PupilTracking():
             #Need to conserve one for the later analysis
             keep = frame
             #The first resize is for the real_analysis
-            keep = cv2.resize(keep,(int(height), int(width)))
+            keep = cv2.resize(keep,(int(height/2), int(width/2)))
             #the second resize if for the analysis when determining parameters
             frame = cv2.resize(frame,(int(height/8), int(width/8)))
             cv2.imwrite('analysis_set/kang%05d.png'%i,keep)
