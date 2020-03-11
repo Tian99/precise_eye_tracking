@@ -96,7 +96,7 @@ class PupilTracking():
         #Read the critical frame from the folder
         self.output_sets.append(self.critical_frame(collections, L, H))
 
-    #Append every frame data to the dictionary and return it back in a big listy
+    #Append every frame data to the dictionary and return it back in a big list
     def critical_frame(self, collections, L, H):
         count = 0
         dic = {}
@@ -188,8 +188,7 @@ class PupilTracking():
             width = frame.shape[1]
             #Need to conserve one for the later analysis
             keep = frame
-            #The first resize is for the real_analysis
-            keep = cv2.resize(keep,(int(height/2), int(width/2)))
+            #The first resize
             #the second resize if for the analysis when determining parameters
             frame = cv2.resize(frame,(int(height/8), int(width/8)))
             cv2.imwrite('analysis_set/kang%05d.png'%i,keep)

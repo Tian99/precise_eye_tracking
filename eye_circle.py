@@ -76,8 +76,10 @@ def circle(name_count, frame):
   original_image = cv2.cvtColor(original_image, cv2.COLOR_GRAY2RGB)
 
   # BUG? - why do this for each? only second is returned?
+  # Good point
   for x, y, r in max_cor:
     circled_cases = cv2.circle(original_image, (x,y), r, (0,0,255))
+    cv2.imwrite('circled/test.png', circled_cases)
 
   return max_cor, max_collec, circled_cases
 
