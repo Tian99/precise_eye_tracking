@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def plotting(dic):
-	length = 0
+	size = 0
 	#Because it is a list that passed in, get the first one
 	dic = data_format(dic)
 	fig = plt.figure()
