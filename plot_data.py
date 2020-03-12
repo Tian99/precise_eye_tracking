@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def plotting(dic):
+	length = 0
 	#Because it is a list that passed in, get the first one
 	dic = data_format(dic)
 	fig = plt.figure()
@@ -12,16 +13,19 @@ def plotting(dic):
 	print(dic)
 
 	y_s_center = np.asarray(dic['s_center'])[:, 0]
-	x_s_center = np.asarray(create_x(len(y_s_center)))
+	x_s_center = np.asarray(create_x(len(y_s_center), size))
 	print(x_s_center.size)
 	print(y_s_center.size)
 
 	y_s_loc = np.asarray(dic['s_loc'])[:, 0]
-	x_s_loc = np.asarray(create_x(len(y_s_loc)))
+	size += len(y_s_center)
+	x_s_loc = np.asarray(create_x(len(y_s_loc), size))
 	y_h_center = np.asarray(dic['h_center'])[:, 0]
-	x_h_center = np.asarray(create_x(len(y_h_center)))
+	size += len(y_s_loc)
+	x_h_center = np.asarray(create_x(len(y_h_center), size))
 	y_h_loc = np.asarray(dic['h_loc'])[:, 0]
-	x_h_loc = np.asarray(create_x(len(y_h_loc)))
+	size += len(y_h_center)
+	x_h_loc = np.asarray(create_x(len(y_h_loc), size))
 
 	ax1.scatter(x_s_center, y_s_center, marker = 'd', c='b', label='first')
 	ax1.scatter(x_s_loc, y_s_loc, marker = 'o', c='r', label='second')
@@ -45,10 +49,10 @@ def data_format(dic):
 
 	return new_dic
 
-def create_x(length):
+def create_x(length, size):
 	li = []
 	for i in range(0, length):
-		li.append(i)
+		li.append(i+size)
 	return li
 
 
