@@ -44,7 +44,8 @@ def data_format(dic):
 	dic = dic[0]
 	for i in dic:
 		for j in dic[i]:
-			if abs(j[0][0] - j[1][0]) < 30:
+			#This one tries to eliminate the outliers
+			if abs(j[0][0] - j[1][0]) < 10:
 				new_dic[i].append(j[0])
 
 	return new_dic

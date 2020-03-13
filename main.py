@@ -10,6 +10,7 @@ from eye_circle import circle
 from csv_analysis import read
 from plot_data import plotting
 from threshold import threshold
+from blur_frame import blur_frame
 from pre_determination import determine 
 from glint_detection import circle_glint
 
