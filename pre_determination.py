@@ -1,6 +1,6 @@
+import cv2
 from threshold import threshold
 from eye_circle import circle
-import cv2
 
 
 def determine(image, k):
@@ -22,7 +22,7 @@ def determine(image, k):
         max_cor, max_collec, circled_cases = circle(count, outcome)
         circle_1, circle_2 = max_collec
         #circle_1+circle_2 is the summation of two highest votes with coordinates
-        guessing.append([(circle_1+circle_2), low, uppert, 'frame_testing/kang%05d.png'%count])
+        guessing.append([(circle_1+circle_2), low, uppert, '../output/frame_testing/kang%05d.png'%count])
 
         print('--------------------------------')
         print('progress:'+str(count/len(lowert)))

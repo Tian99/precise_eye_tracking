@@ -1,14 +1,28 @@
 
 #########################################
 #the image generated with radius set to two will just be messed up, Hence, I let it to find radius itself
-########################################
-
-import cv2,sys
-import functools
+#######################################
+import cv2
+import sys
 import math
-import multiprocessing
-import numpy as np
 import operator
+import functools
+import numpy as np
+import multiprocessing
+
+def circle_acc(frame):
+  height = frame.shape[0]
+  width = frame.shape[1]
+  frame = np.arrray(frame)
+  [x, y] = np.where(frame >= 225)
+  accumulator = np.zeros((height, width))
+  for t in range(0, 360, 2):
+    #Cast it to a new coordinates
+    x0 = int(x-(r*math.cos(math.radians(t))))
+    y0 = int(y-(r*math.sin(math.radians(t))))
+    votes = [y0, x0]
+    [yloc, xloc] = np.where(votes[:, 0] > 0 and votes(:, 1) > 0 and votes(:, 0) < height and votes(:, 1) < width)
+                                    
 
 def circle(name_count, frame):
   original_image = frame # Input file image

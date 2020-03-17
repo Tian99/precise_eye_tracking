@@ -1,9 +1,7 @@
-
+import cv2
 from PIL import Image
 from eye_blur import blur
-from blur_frame import blur_frame
 from eye_canny import canny
-import cv2
 
 def threshold(image, lowert, uppert):
     #Blur it first
@@ -14,16 +12,8 @@ def threshold(image, lowert, uppert):
     #Cut it
     #Don't crop, see how it goes
     #cropped = imageObject[int((280/1776)*shape_1):shape_1, int((380/2364)*shape_2):int((2100/2364)*shape_2)] 
-
     _, threshold = cv2.threshold(imageObject, lowert, uppert, cv2.THRESH_BINARY) 
     
     threshold = canny(threshold)
 
-
-    # threshold = blur_frame(threshold)
-    # cv2.imwrite('output/cropped.png', cropped)
-
     return threshold
-
-# image = cv2.imread('input/sample.png')
-# threshold(image)

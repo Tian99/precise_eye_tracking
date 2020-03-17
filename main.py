@@ -4,15 +4,12 @@ import cv2
 import sys
 import random
 import pickle
-import pic_analyze
 from eye_canny import canny
-from eye_circle import circle
 from csv_analysis import read
 from plot_data import plotting
 from threshold import threshold
-from blur_frame import blur_frame
 from pre_determination import determine 
-from glint_detection import circle_glint
+from eye_circle import circle
 
 #The video frame is mostly 60 fps
 class PupilTracking():
@@ -35,25 +32,15 @@ class PupilTracking():
         self.show = show
         self.num_tests = num_tests
         if timing_fname == "":
-            timing_fname = 'input/testing_set/testing_1/10997_20180818_mri_1_view.csv'
+            timing_fname = '../input/10997_20180818_mri_1_view.csv'
             print("Warning: using default timing %s" % timing_fname)
-
-        # convert video to series of frames
+        # convert video to series of frame
         self.output_sets = []
-        #Break the whole video into frames
+        print('Starting writing images to the file')
         self.number_frame = self.to_frame(video)
-        print('To frame successful')
-
-        # get random frames to test on
         self.random_num = self.rand(self.number_frame, self.num_tests)
-        try:
-            #V:vote, #L and H are threshold, I forgot what name_pic is .....
-            self.V, self.L, self.H, self.name_pic = self.pre_test(self.random_num, self.num_tests)
-        except:
-            #If you shrink the image too much, the algorithm wont work
-            print('Resizing factors too big to be useful')
-            exit()
-
+        #V:vote, #L and H are threshold, I forgot what name_pic is .....
+        self.V, self.L, self.H, self.name_pic = self.pre_test(self.random_num, self.num_tests)
         #Reading from the data
         #list of list that contains the whole set of testing data
         sets = self.file_data(timing_fname) #Needed to be automated for later because each trail has different sets
@@ -66,8 +53,6 @@ class PupilTracking():
 
         self.frame_retrieve(sets, self.L, self.H)
         #Now the output_sets is obtained, next setp is to analyze it.
-        print('Data gethering complete')
-        print('Starting to plot the data')
         plotting(self.output_sets)
 
     def frame_retrieve(self, sets, L, H):
@@ -111,12 +96,14 @@ class PupilTracking():
         ncol = len(collections)
         for i in range(0, ncol):
             for file in collections[i]:
-                case_name = 'analysis_set/kang%05d.png'%file
+                case_name = '../output/analysis_set/kang%05d.png'%file
                 image = cv2.imread(case_name)
                 outcome = threshold(image, L, H)
                 #Here the algorithm starte dto work
                 #max_collec tells you x, y, and r, but really it seems that only x is important in some cases 
-                max_cor, max_collec, circled_cases= circle(count, outcome)
+                output = circle(outcome)
+                print(output)
+              
                 if i == 0:
                     dic['s_center'].append(max_cor)
                 elif i == 1:
@@ -136,7 +123,8 @@ class PupilTracking():
             print('\n\n')
         return dic
 
-        # self.video_analyze(self.L, self.H)
+        self.video_analyze(self.L, self.H)
+
     def file_data(self, timing_fname):
         current = []
         cue, vgs, dly, mgs = read(timing_fname)
@@ -152,7 +140,7 @@ class PupilTracking():
         #Random stores the index for which 'random' picture to tested on
         for case in random:
             #Read the file using the name constituted by the random number and naming conventions
-            case_name = 'frame_testing/kang%05d.png'%case
+            case_name = '../output/frame_testing/kang%05d.png'%case
             image = cv2.imread(case_name)
 
             #Find the best parameters for different threshold of one image of images picked randomly
@@ -177,7 +165,6 @@ class PupilTracking():
             if r not in rand: rand.append(r)
 
         return rand
-
     """
     Method to convert the whole video into frames, and the frames are shrinked so that it could run faster
     shirnked images for pre_determinaiton are stored inside frame_testing
@@ -185,7 +172,6 @@ class PupilTracking():
     Develop a better way latter
     """
     def to_frame(self, video, i = 0):
-        print('Starting to convert video to frames')
         cap = cv2.VideoCapture(video)
         while(cap.isOpened()):
             ret, frame = cap.read()
@@ -201,9 +187,9 @@ class PupilTracking():
             #the second resize if for the analysis when determining parameters
             frame = cv2.resize(frame,(int(height/8), int(width/8)))
             #Normal sized image for the real picture analysis
-            cv2.imwrite('analysis_set/kang%05d.png'%i,keep)
+            cv2.imwrite('../output/analysis_set/kang%05d.png'%i,keep)
             #Shrinked image for the pre_detemrination
-            cv2.imwrite('frame_testing/kang%05d.png'%i,frame)
+            cv2.imwrite('../output/frame_testing/kang%05d.png'%i,frame)
             #Then throw the image to threshold to process
             i+=1
         #Total number of frames
@@ -216,7 +202,6 @@ if __name__ == '__main__':
     if len(sys.argv) < 2 or len(sys.argv) > 3:
         print("USAGE: %s video.mov [timing.csv]" % sys.argv[0])
         exit()
-
     # pass all cli arguments (video, maybe timing) into class
     ######################################################################
     #TODO: change num_tests to 20 later

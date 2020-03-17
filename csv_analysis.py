@@ -18,5 +18,3 @@ def read(filename):
 		mgs.append(row['mgs'])
 		#And maybe append iti later
 	return cue, vgs, dly, mgs
-
-read('input/testing_set/testing_1/10997_20180818_mri_1_view.csv')
