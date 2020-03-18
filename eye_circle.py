@@ -10,19 +10,29 @@ import functools
 import numpy as np
 import multiprocessing
 
+def formula(input, r, t):
+  return int(input - (r*math.cos(math.radians(t))))
+
 def circle_acc(frame):
+  Rmin = 20
+  Rmax = 50
+  frame = frame[:,:,1]
   height = frame.shape[0]
   width = frame.shape[1]
-  frame = np.arrray(frame)
+  frame = np.array(frame)
   [x, y] = np.where(frame >= 225)
   accumulator = np.zeros((height, width))
-  for t in range(0, 360, 2):
-    #Cast it to a new coordinates
-    x0 = int(x-(r*math.cos(math.radians(t))))
-    y0 = int(y-(r*math.sin(math.radians(t))))
-    votes = [y0, x0]
-    [yloc, xloc] = np.where(votes[:, 0] > 0 and votes(:, 1) > 0 and votes(:, 0) < height and votes(:, 1) < width)
-                                    
+  for r in range(Rmin, Rmax, 2):
+    for t in range(0, 360, 2):
+      vector = np.vectorize(formula)
+      #Cast it to a new coordinates
+      x0 = vector(x, r, t)
+      y0 = vector(y, r, t)
+      votes = [y0, x0]
+      return votes
+      print(votes[0])
+      [yloc, xloc] = np.where(votes[0] > 0 and votes[1] > 0 and votes[0] < height and votes[1] < width)
+      print([yloc, xloc])
 
 def circle(name_count, frame):
   original_image = frame # Input file image
