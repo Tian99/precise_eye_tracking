@@ -9,7 +9,7 @@ from csv_analysis import read
 from plot_data import plotting
 from threshold import threshold
 from pre_determination import determine 
-from eye_circle import circle
+from eye_circle import circle_acc
 
 #The video frame is mostly 60 fps
 class PupilTracking():
@@ -82,6 +82,7 @@ class PupilTracking():
 
         #Read the critical frame from the folder
         #Output_sets should be a list with dic(with keys for 4 different trails with list containing the list of [coordinates of most voted circle],[coordinates of second voted circle]) 
+        print('File analysis finished')
         self.output_sets.append(self.critical_frame(collections, L, H))
 
     #Append every frame data to the dictionary and return it back in a big list
@@ -101,8 +102,10 @@ class PupilTracking():
                 outcome = threshold(image, L, H)
                 #Here the algorithm starte dto work
                 #max_collec tells you x, y, and r, but really it seems that only x is important in some cases 
-                output = circle(outcome)
-                print(output)
+                circle = circle_acc(outcome)
+                print('Is it stucking here?')
+                max_cor, max_collec = circle.output()
+                print('or not')
               
                 if i == 0:
                     dic['s_center'].append(max_cor)
@@ -115,7 +118,6 @@ class PupilTracking():
                 else:
                     print('Something went wrong')
                     exit()
-
                 count += 1
             count = 0
             print(dic)

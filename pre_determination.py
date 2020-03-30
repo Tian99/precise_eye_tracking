@@ -1,6 +1,6 @@
 import cv2
 from threshold import threshold
-from eye_circle import circle
+from eye_circle import circle_acc
 
 
 def determine(image, k):
@@ -19,7 +19,8 @@ def determine(image, k):
         outcome = threshold(image, low, uppert)
         #Run the hough transform on each outcome
         #count is simply the naning convention
-        max_cor, max_collec, circled_cases = circle(count, outcome)
+        circle = circle_acc(outcome)
+        max_cor, max_collec = circle.output()
         circle_1, circle_2 = max_collec
         #circle_1+circle_2 is the summation of two highest votes with coordinates
         guessing.append([(circle_1+circle_2), low, uppert, '../output/frame_testing/kang%05d.png'%count])
