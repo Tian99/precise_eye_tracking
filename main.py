@@ -103,8 +103,10 @@ class PupilTracking():
                 #Here the algorithm starte dto work
                 #max_collec tells you x, y, and r, but really it seems that only x is important in some cases 
                 circle = circle_acc(outcome)
+
                 print('Is it stucking here?')
                 max_cor, max_collec = circle.output()
+                
                 print('or not')
               
                 if i == 0:
