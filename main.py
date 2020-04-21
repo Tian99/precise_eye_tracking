@@ -42,13 +42,11 @@ class PupilTracking(QtWidgets.QMainWindow):
         uic.loadUi('./widget/dum.ui', self)
         self.setWindowTitle('Pupil tracking')
         self.show()
+        self.Analyze.setEnabled(False)
         self.Generate.clicked.connect(self.generate)
 
-        #V:vote, #L and H are threshold, I forgot what name_pic is .....
         # self.V, self.L, self.H, self.name_pic = self.pre_test(self.random_num, self.num_tests)
-        #Reading from the data
         #list of list that contains the whole set of testing data
-        # sets = self.file_data(timing_fname) #Needed to be automated for later because each trail has different sets
         # print(sets)
         # # [[6.0, 8.0, 10.0, 16.0], [20.0, 22.0, 24.0, 30.0], [40.0, 42.0, 44.0, 50.0], ....
         # #Now print the results out and take a look
@@ -67,11 +65,8 @@ class PupilTracking(QtWidgets.QMainWindow):
         if not os.path.exists(Video) or not os.path.exists(File):
             print('File entered not exist')
             return
+        print('Start writing images to the file')
 
-        print(Video)
-        print(File)
-
-        print('Starting writing images to the file')
         self.number_frame, wanted = self.to_frame(Video)
         picture_chosen = self.pic_collection[wanted]
 
@@ -79,6 +74,10 @@ class PupilTracking(QtWidgets.QMainWindow):
         #Set up the user interface
         self.MyWidget = MyWidget(self)
         self.LayVideo.addWidget(self.MyWidget)
+
+        sets = self.file_data(timing_fname)
+        self.frame_retrieve(sets, self.L, self.H)
+        self.Analyze.setEnabled(True)
         # self.random_num = self.rand(self.number_frame, self.num_tests)
 
 
@@ -124,18 +123,13 @@ class PupilTracking(QtWidgets.QMainWindow):
         ncol = len(collections)
         for i in range(0, ncol):
             for file in collections[i]:
-                case_name = '../output/analysis_set/kang%05d.png'%file
                 image = cv2.imread(case_name)
                 outcome = threshold(image, L, H)
                 #Here the algorithm starte dto work
                 #max_collec tells you x, y, and r, but really it seems that only x is important in some cases 
                 circle = circle_acc(outcome)
-
-                print('Is it stucking here?')
                 max_cor, max_collec = circle.output()
                 
-                print('or not')
-              
                 if i == 0:
                     dic['s_center'].append(max_cor)
                 elif i == 1:
@@ -159,6 +153,7 @@ class PupilTracking(QtWidgets.QMainWindow):
     def file_data(self, timing_fname):
         current = []
         cue, vgs, dly, mgs = read(timing_fname)
+
         for i in range(0, len(cue)):
             current.append([cue[i], vgs[i], dly[i], mgs[i]])
         #Now start to narrow down the analysis rang

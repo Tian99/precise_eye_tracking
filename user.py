@@ -10,7 +10,7 @@ class MyWidget(QtWidgets.QWidget):
         self.setGeometry(30,30,600,400)
         self.label = QtWidgets.QLabel(self)
         self.pixmap = QPixmap('chosen_pic.png')
-        self.resize(self.pixmap.width(), self.pixmap.height())
+        self.setFixedSize(self.pixmap.width(), self.pixmap.height())
 
         self.begin = QtCore.QPoint()
         self.end = QtCore.QPoint()
