@@ -2,19 +2,23 @@
 
 import cv2
 import sys
+import os
 import random
 import pickle
+import numpy as np
+from user import MyWidget
 from eye_canny import canny
 from csv_analysis import read
 from plot_data import plotting
 from threshold import threshold
-from pre_determination import determine 
 from eye_circle import circle_acc
+from pre_determination import determine 
+from PyQt5 import uic, QtCore, QtGui, QtWidgets
 
 #The video frame is mostly 60 fps
-class PupilTracking():
+class PupilTracking(QtWidgets.QMainWindow):
 
-    def __init__(self, video, timing_fname="", num_tests=5, fps=60, show=False):
+    def __init__(self, timing_fname="", num_tests=5, fps=60):
         """
         Three phases: 
         1. determination the best way to transfrom an image into computer readable, 
@@ -28,32 +32,54 @@ class PupilTracking():
         Number of image traisl you want
         """
         super().__init__()
+        #All picture files are saved as a dicitonary to boost up the speed
         self.fps = fps
-        self.show = show
-        self.num_tests = num_tests
-        if timing_fname == "":
-            timing_fname = '../input/10997_20180818_mri_1_view.csv'
-            print("Warning: using default timing %s" % timing_fname)
-        # convert video to series of frame
+        self.random_num = 0
         self.output_sets = []
-        print('Starting writing images to the file')
-        self.number_frame = self.to_frame(video)
-        self.random_num = self.rand(self.number_frame, self.num_tests)
-        #V:vote, #L and H are threshold, I forgot what name_pic is .....
-        self.V, self.L, self.H, self.name_pic = self.pre_test(self.random_num, self.num_tests)
-        #Reading from the data
-        #list of list that contains the whole set of testing data
-        sets = self.file_data(timing_fname) #Needed to be automated for later because each trail has different sets
-        print(sets)
-        # [[6.0, 8.0, 10.0, 16.0], [20.0, 22.0, 24.0, 30.0], [40.0, 42.0, 44.0, 50.0], ....
-        #Now print the results out and take a look
-        print(self.V, self.L, self.H, self.name_pic)
-        #Now do the analysis set by set// Starting to code the main part of the program        
-        print('pretesting finished, starting analying the collection pictures using the paramaters')
+        self.pic_collection = {}
+        self.num_tests = num_tests
 
+        uic.loadUi('./widget/dum.ui', self)
+        self.setWindowTitle('Pupil tracking')
+        self.show()
+        self.Analyze.setEnabled(False)
+        self.Generate.clicked.connect(self.generate)
+
+        # self.V, self.L, self.H, self.name_pic = self.pre_test(self.random_num, self.num_tests)
+        #list of list that contains the whole set of testing data
+        # print(sets)
+        # # [[6.0, 8.0, 10.0, 16.0], [20.0, 22.0, 24.0, 30.0], [40.0, 42.0, 44.0, 50.0], ....
+        # #Now print the results out and take a look
+        # print(self.V, self.L, self.H, self.name_pic)
+        # #Now do the analysis set by set// Starting to code the main part of the program        
+        # print('pretesting finished, starting analying the collection pictures using the paramaters')
+
+        # self.frame_retrieve(sets, self.L, self.H)
+        # #Now the output_sets is obtained, next setp is to analyze it.
+        # plotting(self.output_sets)
+
+    def generate(self):
+        Video = self.Video.text()
+        File = self.File.text()
+        #Check validity
+        if not os.path.exists(Video) or not os.path.exists(File):
+            print('File entered not exist')
+            return
+        print('Start writing images to the file')
+
+        self.number_frame, wanted = self.to_frame(Video)
+        picture_chosen = self.pic_collection[wanted]
+
+        cv2.imwrite('chosen_pic.png', picture_chosen)
+        #Set up the user interface
+        self.MyWidget = MyWidget(self)
+        self.LayVideo.addWidget(self.MyWidget)
+
+        sets = self.file_data(timing_fname)
         self.frame_retrieve(sets, self.L, self.H)
-        #Now the output_sets is obtained, next setp is to analyze it.
-        plotting(self.output_sets)
+        self.Analyze.setEnabled(True)
+        # self.random_num = self.rand(self.number_frame, self.num_tests)
+
 
     def frame_retrieve(self, sets, L, H):
         #Only need to get the frame around the critical area
@@ -97,16 +123,13 @@ class PupilTracking():
         ncol = len(collections)
         for i in range(0, ncol):
             for file in collections[i]:
-                case_name = '../output/analysis_set/kang%05d.png'%file
                 image = cv2.imread(case_name)
                 outcome = threshold(image, L, H)
                 #Here the algorithm starte dto work
                 #max_collec tells you x, y, and r, but really it seems that only x is important in some cases 
                 circle = circle_acc(outcome)
-                print('Is it stucking here?')
                 max_cor, max_collec = circle.output()
-                print('or not')
-              
+                
                 if i == 0:
                     dic['s_center'].append(max_cor)
                 elif i == 1:
@@ -130,6 +153,7 @@ class PupilTracking():
     def file_data(self, timing_fname):
         current = []
         cue, vgs, dly, mgs = read(timing_fname)
+
         for i in range(0, len(cue)):
             current.append([cue[i], vgs[i], dly[i], mgs[i]])
         #Now start to narrow down the analysis rang
@@ -174,6 +198,7 @@ class PupilTracking():
     Develop a better way latter
     """
     def to_frame(self, video, i = 0):
+        maximum = wanted = 0
         cap = cv2.VideoCapture(video)
         while(cap.isOpened()):
             ret, frame = cap.read()
@@ -183,31 +208,43 @@ class PupilTracking():
             #Downscale the frame
             height = frame.shape[0]
             width = frame.shape[1]
-            #Need to conserve one for the later analysis
-            keep = frame
-            #The first resize
             #the second resize if for the analysis when determining parameters
-            frame = cv2.resize(frame,(int(height/8), int(width/8)))
+            # frame = cv2.resize(frame,(int(height/8), int(width/8)))
+            #Let's find the picture with most pixel smaller than 100, make the range up tp 1000
+            if len(np.where(frame < 100)[0]) > maximum and i < 1000:
+                maximum = len(np.where(frame < 100)[0])
+                wanted = i
+
+            self.pic_collection[i] = frame
+
             #Normal sized image for the real picture analysis
-            cv2.imwrite('../output/analysis_set/kang%05d.png'%i,keep)
+            # cv2.imwrite('../output/analysis_set/kang%05d.png'%i,keep)
             #Shrinked image for the pre_detemrination
-            cv2.imwrite('../output/frame_testing/kang%05d.png'%i,frame)
-            #Then throw the image to threshold to process
+            # cv2.imwrite('../output/frame_testing/kang%05d.png'%i,frame)
+            # Then throw the image to threshold to process
             i+=1
+            print(i)
+            if i > 1000:
+                return i, wanted
         #Total number of frames
-        return i
+        print(wanted)
+        print(maximum)
+        return i, wanted
 
 
 if __name__ == '__main__':
 
+    APP = QtWidgets.QApplication([])
+    WINDOW = PupilTracking()
+    sys.exit(APP.exec_())
     # usage if wrong number of input args
-    if len(sys.argv) < 2 or len(sys.argv) > 3:
-        print("USAGE: %s video.mov [timing.csv]" % sys.argv[0])
-        exit()
+    # if len(sys.argv) < 2 or len(sys.argv) > 3:
+    #     print("USAGE: %s video.mov [timing.csv]" % sys.argv[0])
+    #     exit()
     # pass all cli arguments (video, maybe timing) into class
     ######################################################################
     #TODO: change num_tests to 20 later
     ######################################################################
-    PupilTracking(*sys.argv[1:], show=True, num_tests=5)
+    # PupilTracking(*sys.argv[1:], show=True, num_tests=5)
 
 

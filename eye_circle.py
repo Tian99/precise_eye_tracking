@@ -20,10 +20,13 @@ class circle_acc:
 	    self.height = frame.shape[0]
 	    self.width = frame.shape[1]
 	    [self.x, self.y] = np.where(frame >= 225)
+	    self.angle = [i for i in range(0, 360, 2)]
+	    self.r = [i for i in range(self.Rmin, self.Rmax)]
 	    self.accumulator = {}
 	    self.vector = np.vectorize(self.formula)
+	    self.vectorMid = np.vectorize(self.middle)
+	    self.vectorEnd = np.vectorize(self.end)
 	    self.vector(self.x, self.y)
-
 
 	def output(self):
 		k = Counter(self.accumulator)
@@ -34,19 +37,22 @@ class circle_acc:
 		return max_cor, max_collec
 
 	def formula(self,x,y):
-		for r in range(self.Rmin,self.Rmax,2):
-		  for t in range(0,360,2):
+		self.vectorMid(self.r, x, y)
 
-		    #Cast it to a new coordinates
-		    x0 = int(x-(r*math.cos(math.radians(t))))
-		    y0 = int(y-(r*math.sin(math.radians(t))))
+	def middle(self, r, x, y):
+		self.vectorEnd(np.array(self.angle), np.array([r]*len(self.angle)), np.array([x]*len(self.angle)), np.array([y]*len(self.angle)))
 
-		    # Checking if the center is within the range of image
-		    if x0>0 and x0<self.width and y0>0 and y0<self.height:
-		      if (x0,y0,r) in self.accumulator:
-		        self.accumulator[(x0,y0,r)]=self.accumulator[(x0,y0,r)]+1
-		      else:
-		        self.accumulator[(x0,y0,r)]=0
+	def end(self, angle, r, x, y):
+		#Cast it to a new coordinates
+		x0 = int(x-(r*math.cos(math.radians(angle))))
+		y0 = int(y-(r*math.sin(math.radians(angle))))
+
+		# Checking if the center is within the range of image
+		if x0>0 and x0<self.width and y0>0 and y0<self.height:
+		  if (x0,y0,r) in self.accumulator:
+		    self.accumulator[(x0,y0,r)]=self.accumulator[(x0,y0,r)]+1
+		  else:
+			    self.accumulator[(x0,y0,r)]=0
 
 
 def circle(name_count, frame):
