@@ -71,11 +71,14 @@ while True:
 	if frame is None:
 		print('Ending of the analysis')
 		break
-
-	frame = imutils.resize(frame, width = 500)
 	frame = blur(frame)
+	frame = imutils.resize(frame, width = 500)
 	if r != None:
 		frame = frame[int(r[1]):int(r[1] + r[3]), int(r[0]):int(r[0]+r[2])]
+		# #Stupid library only sccepts greyscaled image
+		# frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+		# frame = cv2.adaptiveThreshold(frame,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
+  #           cv2.THRESH_BINARY,15,2)
 	#Crop the image
 	# frame = frame[50:5000, 70:300]
 	(H, W) = frame.shape[:2]
@@ -111,12 +114,13 @@ while True:
 		for (i, (k, v)) in enumerate(info):
 			text = "{}: {}".format(k, v)
 			cv2.putText(frame, text, (10, H - ((i * 20) + 20)),
-				cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+				cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
 
 		# show the output frame
 	cv2.imshow("Frame", frame)
 	key = cv2.waitKey(1) & 0xFF
+	# if the 'k' key is selected, we are going to "select" a big bounding
 	# if the 's' key is selected, we are going to "select" a bounding
 	# box to track
 	if key == ord("k"):
