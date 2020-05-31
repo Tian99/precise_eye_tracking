@@ -10,6 +10,8 @@ import functools
 import numpy as np
 import multiprocessing
 from collections import Counter
+from numba import jit, cuda
+from timeit import default_timer as timer
 
 class circle_acc:
 	def __init__(self, frame):
@@ -54,13 +56,14 @@ class circle_acc:
 		  else:
 			    self.accumulator[(x0,y0,r)]=0
 
-
-def circle(name_count, frame):
+# function optimized to run on gpu
+@jit
+def circle(frame, name_count = None):
+  # start = timer()
   original_image = frame # Input file image
   edged_image = frame #Input image for the edged image
   height = edged_image.shape[0]
   width = edged_image.shape[1]
-
 
   Rmin = 20
   Rmax = 50
@@ -125,7 +128,7 @@ def circle(name_count, frame):
   for x, y, r in max_cor:
     circled_cases = cv2.circle(original_image, (x,y), r, (0,0,255))
     cv2.imwrite('circled/test.png', circled_cases)
-
+  # print(timer() - start)
   return max_cor, max_collec, circled_cases
 
 # def ccast(yx, r, t, width, height):
